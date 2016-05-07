@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           IMDB Actor Title Ratings
-// @version        0.1
+// @version        0.2
 // @description    Adds ratings & vote counts with sorting ability to an actor's movie/TV show lists
 // @match          http://www.imdb.com/name/*
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
