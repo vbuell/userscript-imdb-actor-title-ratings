@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           IMDB Actor Title Ratings
-// @version        1.0
+// @version        1.0.1
 // @license        GPL
 // @description    Adds ratings & vote counts with sorting ability to a person's movie/TV show lists
 // @namespace      http://userscripts.org/users/518906
@@ -9,6 +9,7 @@
 // @match          http://www.imdb.com/name/*
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 // @require        https://datejs.googlecode.com/files/date.js
+// @grant          none
 // ==/UserScript==
 
 // add css
@@ -139,9 +140,7 @@ $('.filmo-row.header div a').click(function () {
 // watch for changes to the category sections' style attribute, add ratings when made visible (cut down on hits to omdbApi.com)
 var observer = new MutationObserver(function(mutations) {
 	'use strict';
-	if (mutations.length === 1) {
-		addRatingsToSection(mutations[0].target);
-	}
+    addRatingsToSection(mutations[0].target);
 });
 
 $('.filmo-category-section').each(function () {
