@@ -105,8 +105,8 @@ function sortCategory(sectionDiv, sortBy, direction) {
 	}
 	
 	var s = firstBy(function (a, b) {return calcSort(a, b, sortBy, direction);})
-			.thenBy(function (a, b) {return calcSort(a, b, secondSortProperty, direction);})
-			.thenBy(function (a, b) {return calcSort(a, b, thirdSortProperty, direction);});
+		.thenBy(function (a, b) {return calcSort(a, b, secondSortProperty, direction);})
+		.thenBy(function (a, b) {return calcSort(a, b, thirdSortProperty, direction);});
 	rows.sort(s);
 	
     // add class odd or even
