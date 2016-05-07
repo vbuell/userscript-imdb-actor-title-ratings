@@ -16,7 +16,7 @@ var css = '<style type="text/css"> \
              .votes_column a:hover, .rating_column a:hover, .year_column a:hover{text-decoration:none !important;color:inherit} \
              .year_column{width:40px;text-align:inherit} \
              .header .sorted{background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAICAYAAADN5B7xAAAAQUlEQVR4AWOQTNtkAMT/icQGDCAAZDQQobiBAQpgmi7gUXyBAQ0QcpoBunp8TmtAV4fhNHxOIeA0TKfgdBoupwAAVdttkcoQnXIAAAAASUVORK5CYII=) left no-repeat} \
-			 .header .sortedDesc{background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAICAYAAADN5B7xAAAAPUlEQVR4AWPABiTTNjWAMLo4LsUGQPwfig2I0XABScMFQoob4IoRuIGwUzCxAX6nYOILBJ2C1WmEnYLpNADzi22RZiYJ+gAAAABJRU5ErkJggg==) left no-repeat} \
+             .header .sortedDesc{background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAICAYAAADN5B7xAAAAPUlEQVR4AWPABiTTNjWAMLo4LsUGQPwfig2I0XABScMFQoob4IoRuIGwUzCxAX6nYOILBJ2C1WmEnYLpNADzi22RZiYJ+gAAAABJRU5ErkJggg==) left no-repeat} \
           </style>'
 $(css).appendTo('head');
 
