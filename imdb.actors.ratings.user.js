@@ -28,9 +28,9 @@ $('.filmo-category-section').prepend('<div class="filmo-row header"><div class="
 
 //  add the rating & votes to the movie/TV show
 function addData(yearSpan, rating, votes, released) {
-	'use strict';
+    'use strict';
     $(yearSpan).attr('title', released);
-	$(yearSpan).after('<span class="votes_column mellow"><small>' + votes + '</small></span><span class="rating_column">' + rating + '</span>');
+    $(yearSpan).after('<span class="votes_column mellow"><small>' + votes + '</small></span><span class="rating_column">' + rating + '</span>');
 }
 
 // iterate through the movies/TV shows in the passed section and lookup the rating & vote count via omdbApi.com
