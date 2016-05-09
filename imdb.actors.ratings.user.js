@@ -9,15 +9,17 @@
 // @match          http://www.imdb.com/name/*
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 // @require        https://datejs.googlecode.com/files/date.js
-// @grant          none
+// @require        https://raw.githubusercontent.com/evanplaice/jquery-csv/master/src/jquery.csv.min.js
+// @grant   GM_getValue
+// @grant   GM_setValue
 // ==/UserScript==
 
 // add css
 var css = '<style type="text/css"> \
-             .votes_column, .rating_column, .year_column{padding-left: 15px;} \
-             .votes_column, .rating_column{float: right;width:65px} \
-             .header .votes_column a, .header .rating_column a, .header .year_column a{cursor:pointer} \
-             .votes_column a:hover, .rating_column a:hover, .year_column a:hover{text-decoration:none !important;color:inherit} \
+             .your_rating_column, .votes_column, .rating_column, .year_column{padding-left: 0px;} \
+             .your_rating_column, .votes_column, .rating_column{float: right;width:65px} \
+             .header .your_rating_column a, .header .votes_column a, .header .rating_column a, .header .year_column a{cursor:pointer} \
+             .your_rating_column a:hover, .votes_column a:hover, .rating_column a:hover, .year_column a:hover{text-decoration:none !important;color:inherit} \
              .year_column{width:40px;text-align:inherit} \
              .header .sorted{background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAYUlEQVQoz2NgQAKSaZs2APF/KN7AgAtQRyFQoB+qAISfIyl8jiTeC1JoCsQ/kRSgY5CcMczUHDwKc9CdsAaLovVAzIiukB+I7yIpug/Egrh8bQx10y8gNmPAB6DuLUAXBwDx5XOePVdilwAAAABJRU5ErkJggg==) left no-repeat} \
              .header .sortedDesc{background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAXElEQVQoz2NgQAOSaZtygLiAAR8AKjAG4p9A/AuITXAp4gfiu0D8H4pBbH5sCtcgKYLhNdjc9R8HzkF3Fy6FIDljkMJeIN4Axc+RFDxHEu9Fd8IGJIUb8AUP5QoBYK5yX24/ZOIAAAAASUVORK5CIIA=) left no-repeat} \
@@ -25,13 +27,62 @@ var css = '<style type="text/css"> \
 $(css).appendTo('head');
 
 // add headers (Rating, Votes, Year)
-$('.filmo-category-section').prepend('<div class="filmo-row header"><div class="year_column sorted"><a title="Sort">Year</a></div><div class="votes_column mellow"><a title="Sort">Votes</a></div><div class="rating_column"><a title="Sort">Rating</a></div><br></div>');
+$('.filmo-category-section').prepend('<div class="filmo-row header"><div class="year_column sorted"><a title="Sort">Year</a></div><div class="votes_column mellow"><a title="Sort">Votes</a></div><div class="your_rating_column"><a title="Sort">Your</a></div><div class="rating_column"><a title="Sort">Rating</a></div><br></div>');
 
 //  add the rating & votes to the movie/TV show
-function addData(yearSpan, rating, votes, released) {
+function addData(yearSpan, rating, myRating, votes, released) {
     'use strict';
     $(yearSpan).attr('title', released);
-    $(yearSpan).after('<span class="votes_column mellow"><small>' + votes + '</small></span><span class="rating_column">' + rating + '</span>');
+    $(yearSpan).after('<span class="votes_column mellow"><small>' + votes + '</small></span><span class="your_rating_column">' + myRating + '</span><span class="rating_column">' + rating + '</span>');
+}
+
+var userDataLoaded = false;
+
+function loadUserRatingsAndStoreToGmStorage() {
+	console.log('GM_getValue(imdbLastModified) = ' + GM_getValue('imdbLastModified'));
+	console.log('Delta: ' + (Date.now().getTime() - GM_getValue('imdbLastModified')));
+	
+	if (GM_getValue('imdbLastModified') && (Date.now().getTime() - GM_getValue('imdbLastModified') < 3600000 * 1)) {
+		return;
+	}
+	
+	var userId = scrapUserId();
+
+	var imdbUserRatingsCsvUrl = 'http://www.imdb.com/list/export?list_id=ratings&author_id=' + userId;
+	$.ajax({
+		dataType: "text",
+		url: imdbUserRatingsCsvUrl,
+		success: function( csv_text ) {
+			console.log('Parsing CSV.');
+			var arr = $.csv.toArrays(csv_text);
+			console.log('Parsed. Entries: ' + arr.length);
+			for (var i = 1; i < arr.length; i++) {
+				key = arr[i][1];
+				rating = arr[i][8];
+				GM_setValue(key, rating);
+			}
+			GM_setValue('imdbLastModified', Date.now().getTime());
+		}
+	});
+}
+
+function scrapUserId() {
+	var userLink = $('#navUserMenu .navCategory a').attr('href');
+	var re = /\/user\/([a-z0-9]+)\//;
+	var match = re.exec(userLink);  
+	if (!match)  
+		window.alert("Can't find username. " + userLink);
+	else
+		return match[1];
+}
+
+function getUserRating(imdbId) {
+	if (!userDataLoaded) {
+		userDataLoaded = true;
+		loadUserRatingsAndStoreToGmStorage();
+	}
+
+	return GM_getValue(imdbId, '-');
 }
 
 // iterate through the movies/TV shows in the passed section and lookup the rating & vote count via omdbApi.com
@@ -44,11 +95,12 @@ function addRatingsToSection(filmoCategorySection) {
 			var imdbId = $(this).attr('id').split('-')[1];
 			var omdbUrl = 'http://www.omdbapi.com/?i=' + imdbId;
 			var yearSpan = $(this).find('span.year_column');
+			var myRating = getUserRating(imdbId);
 			$.getJSON(omdbUrl, function( data ) {
 				if (data.Response === 'True') {
-					addData(yearSpan, data.imdbRating, data.imdbVotes, data.Released);
+					addData(yearSpan, data.imdbRating, myRating, data.imdbVotes, data.Released);
 				} else {
-					addData(yearSpan, 'N/A', 'N/A', yearSpan.text().trim().slice(0,4));
+					addData(yearSpan, 'N/A', myRating, 'N/A', yearSpan.text().trim().slice(0,4));
 				}
 			});
 		});
