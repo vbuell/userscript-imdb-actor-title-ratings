@@ -29,6 +29,21 @@ $(css).appendTo('head');
 // add headers (Rating, Votes, Year)
 $('.filmo-category-section').prepend('<div class="filmo-row header"><div class="year_column sorted"><a title="Sort">Year</a></div><div class="votes_column mellow"><a title="Sort">Votes</a></div><div class="your_rating_column"><a title="Sort">Your</a></div><div class="rating_column"><a title="Sort">Rating</a></div><br></div>');
 
+$('#filmoform').prepend('<select id="filmoform-type-select" name="sort" class="fixed"><option value="">Show all</option><option value="?">Feature Film</option><option value="typeVideoGame">Video Games</option><option value="typeTvSeries">TV Series</option><option value="typeShort">Short</option></select>');
+
+$('#filmoform-type-select').on('change', function() {
+	var selectedType = $("#filmoform-type-select").val();
+	if (selectedType == '') {
+		$('.filmo-row:not(.header)').show();
+	} else if (selectedType == '?') {
+		$('.filmo-row:not(.header)').show();
+		$('.filmo-row.typeVideoGame, .filmo-row.typeTvSeries, .filmo-row.typeShort').hide();
+	} else {
+		$('.filmo-row:not(.header)').hide();
+		$('.filmo-row.'+selectedType).show();
+	}
+});
+
 //  add the rating & votes to the movie/TV show
 function addData(yearSpan, rating, myRating, votes, released) {
     'use strict';
@@ -98,6 +113,10 @@ function addRatingsToSection(filmoCategorySection) {
 			var omdbUrl = 'http://www.omdbapi.com/?i=' + imdbId;
 			var yearSpan = $(this).find('span.year_column');
 			var myRating = getUserRating(imdbId);
+			var itemText = $(this).text();
+			if (itemText.indexOf("(TV Series)") > 0 || itemText.indexOf("(TV Mini-Series)") > 0) $(this).addClass("typeTvSeries");
+			if (itemText.indexOf("(Video Game)") > 0) $(this).addClass("typeVideoGame");
+			if (itemText.indexOf("(Short)") > 0 || itemText.indexOf("(Video short)") > 0) $(this).addClass("typeShort");
 			$.getJSON(omdbUrl, function( data ) {
 				if (data.Response === 'True') {
 					addData(yearSpan, data.imdbRating, myRating, data.imdbVotes, data.Released);
