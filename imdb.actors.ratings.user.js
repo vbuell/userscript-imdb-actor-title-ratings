@@ -59,7 +59,9 @@ function loadUserRatingsAndStoreToGmStorage() {
 			for (var i = 1; i < arr.length; i++) {
 				key = arr[i][1];
 				rating = arr[i][8];
-				GM_setValue(key, rating);
+				if (GM_getValue(key) != rating) {	// GM_getValue is much faster than setValue
+					GM_setValue(key, rating);
+				}
 			}
 			GM_setValue('imdbLastModified', Date.now().getTime());
 		}
