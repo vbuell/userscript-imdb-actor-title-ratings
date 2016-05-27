@@ -8,7 +8,7 @@
 // @author         Nonya Beesnes, Wardenclyffe Tower
 // @match          http://www.imdb.com/name/*
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
-// @require        https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js
+// @require        https://datejs.googlecode.com/files/date.js
 // @require        https://raw.githubusercontent.com/evanplaice/jquery-csv/master/src/jquery.csv.min.js
 // @grant   GM_getValue
 // @grant   GM_setValue
