@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name           IMDB Actor Title Ratings
-// @version        1.0.1
+// @name           IMDB Person's Title Ratings
+// @version        1.0.2
 // @license        GPL
 // @description    Adds ratings & vote counts with sorting ability to a person's movie/TV show lists
 // @namespace      http://userscripts.org/users/518906
 // @icon           http://www.imdb.com/favicon.ico
-// @author         Nonya Beesnes
+// @author         Nonya Beesnes, Wardenclyffe Tower
 // @match          http://www.imdb.com/name/*
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
-// @require        https://datejs.googlecode.com/files/date.js
+// @require        https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js
 // @require        https://raw.githubusercontent.com/evanplaice/jquery-csv/master/src/jquery.csv.min.js
 // @grant   GM_getValue
 // @grant   GM_setValue
