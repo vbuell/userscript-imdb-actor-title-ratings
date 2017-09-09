@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           IMDB Person's Title Ratings
-// @version        1.0.2
+// @version        1.0.3
 // @license        GPL
 // @description    Adds ratings & vote counts with sorting ability to a person's movie/TV show lists
 // @namespace      http://userscripts.org/users/518906
@@ -8,7 +8,7 @@
 // @author         Nonya Beesnes, Wardenclyffe Tower
 // @match          http://www.imdb.com/name/*
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
-// @require        https://datejs.googlecode.com/files/date.js
+// @require        https://raw.githubusercontent.com/datejs/Datejs/master/build/date.js
 // @require        https://raw.githubusercontent.com/evanplaice/jquery-csv/master/src/jquery.csv.min.js
 // @grant   GM_getValue
 // @grant   GM_setValue
@@ -55,9 +55,9 @@ var userDataLoaded = false;
 
 function loadUserRatingsAndStoreToGmStorage() {
 	console.log('GM_getValue(imdbLastModified) = ' + GM_getValue('imdbLastModified'));
-	console.log('Delta: ' + (Date.now().getTime() - GM_getValue('imdbLastModified')));
+	console.log('Delta: ' + (Date.now() - GM_getValue('imdbLastModified')));
 	
-	if (GM_getValue('imdbLastModified') && (Date.now().getTime() - GM_getValue('imdbLastModified') < 3600000 * 1)) {
+	if (GM_getValue('imdbLastModified') && (Date.now() - GM_getValue('imdbLastModified') < 3600000 * 1)) {
 		return;
 	}
 	
@@ -78,7 +78,7 @@ function loadUserRatingsAndStoreToGmStorage() {
 					GM_setValue(key, rating);
 				}
 			}
-			GM_setValue('imdbLastModified', Date.now().getTime());
+			GM_setValue('imdbLastModified', Date.now());
 		}
 	});
 }
@@ -110,7 +110,7 @@ function addRatingsToSection(filmoCategorySection) {
 		$(filmoCategorySection).addClass('hasRatings');
 		$(filmoCategorySection).find('.filmo-row:not(.header)').each(function() {
 			var imdbId = $(this).attr('id').split('-')[1];
-			var omdbUrl = 'http://www.omdbapi.com/?i=' + imdbId;
+			var omdbUrl = 'http://www.omdbapi.com/?i=' + imdbId + '&apikey=BanMePlz';
 			var yearSpan = $(this).find('span.year_column');
 			var myRating = getUserRating(imdbId);
 			var itemText = $(this).text();
