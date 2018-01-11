@@ -110,7 +110,7 @@ function addRatingsToSection(filmoCategorySection) {
 		$(filmoCategorySection).addClass('hasRatings');
 		$(filmoCategorySection).find('.filmo-row:not(.header)').each(function() {
 			var imdbId = $(this).attr('id').split('-')[1];
-			var omdbUrl = 'http://www.omdbapi.com/?i=' + imdbId + '&apikey=BanMePlz';
+			var omdbUrl = 'http://www.omdbapi.com/?i=' + imdbId + '&apikey=PlsBanMe';
 			var yearSpan = $(this).find('span.year_column');
 			var myRating = getUserRating(imdbId);
 			var itemText = $(this).text();
