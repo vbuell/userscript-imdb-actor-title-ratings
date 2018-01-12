@@ -10,8 +10,11 @@
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 // @require        https://raw.githubusercontent.com/datejs/Datejs/master/build/date.js
 // @require        https://raw.githubusercontent.com/evanplaice/jquery-csv/master/src/jquery.csv.min.js
+// @require        https://raw.github.com/odyniec/MonkeyConfig/master/monkeyconfig.js
 // @grant   GM_getValue
 // @grant   GM_setValue
+// @grant   GM_registerMenuCommand
+// @grant   GM_addStyle
 // ==/UserScript==
 
 // add css
@@ -42,6 +45,18 @@ $('#filmoform-type-select').on('change', function() {
 		$('.filmo-row:not(.header)').hide();
 		$('.filmo-row.'+selectedType).show();
 	}
+});
+
+// Configuration
+cfg = new MonkeyConfig({
+    title: 'IMDB Configuration',
+    menuCommand: true,
+    params: {
+		omdb_username: {
+			type: 'text',
+			'default': 'foo'
+		}
+    }
 });
 
 //  add the rating & votes to the movie/TV show
@@ -110,7 +125,8 @@ function addRatingsToSection(filmoCategorySection) {
 		$(filmoCategorySection).addClass('hasRatings');
 		$(filmoCategorySection).find('.filmo-row:not(.header)').each(function() {
 			var imdbId = $(this).attr('id').split('-')[1];
-			var omdbUrl = 'http://www.omdbapi.com/?i=' + imdbId + '&apikey=PlsBanMe';
+			var omdbUser = cfg.get('omdb_username');
+			var omdbUrl = 'http://www.omdbapi.com/?i=' + imdbId + '&apikey=' + omdbUser;
 			var yearSpan = $(this).find('span.year_column');
 			var myRating = getUserRating(imdbId);
 			var itemText = $(this).text();
@@ -123,6 +139,10 @@ function addRatingsToSection(filmoCategorySection) {
 				} else {
 					addData(yearSpan, 'N/A', myRating, 'N/A', yearSpan.text().trim().slice(0,4));
 				}
+			}).fail(function( jqxhr, textStatus, error ) {
+				var err = textStatus + ", " + error;
+				console.log("Request Failed: " + err);
+				addData(yearSpan, '<a href="#" onclick="cfg.open();">unauth</a>', myRating, '...', yearSpan.text().trim().slice(0,4));
 			});
 		});
 	}
