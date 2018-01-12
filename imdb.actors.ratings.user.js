@@ -63,7 +63,7 @@ function loadUserRatingsAndStoreToGmStorage() {
 	
 	var userId = scrapUserId();
 
-	var imdbUserRatingsCsvUrl = 'http://www.imdb.com/list/export?list_id=ratings&author_id=' + userId;
+	var imdbUserRatingsCsvUrl = 'http://www.imdb.com/user/' + userId + '/ratings/export';
 	$.ajax({
 		dataType: "text",
 		url: imdbUserRatingsCsvUrl,
@@ -72,8 +72,8 @@ function loadUserRatingsAndStoreToGmStorage() {
 			var arr = $.csv.toArrays(csv_text);
 			console.log('Parsed. Entries: ' + arr.length);
 			for (var i = 1; i < arr.length; i++) {
-				key = arr[i][1];
-				rating = arr[i][8];
+				key = arr[i][0];
+				rating = arr[i][1];
 				if (GM_getValue(key) != rating) {	// GM_getValue is much faster than setValue
 					GM_setValue(key, rating);
 				}
