@@ -1,6 +1,6 @@
 # userscript-imdb-actor-title-ratings
 
-Greasemonkey, VioletMonkey, Tampermonkey compatible userscript to show user's and overal ratings on IMDB actor page. That's a continuation of work made by Nonya Beesnes and Wardenclyffe Tower.
+Greasemonkey, ViolentMonkey, Tampermonkey compatible userscript to show user's and overal ratings on IMDB actor page. That's a continuation of work made by Nonya Beesnes and Wardenclyffe Tower.
 
 Configuration:
 -------------
