@@ -6,7 +6,7 @@
 // @namespace      http://userscripts.org/users/518906
 // @icon           http://www.imdb.com/favicon.ico
 // @author         Nonya Beesnes, Wardenclyffe Tower
-// @match          http://www.imdb.com/name/*
+// @match          https://www.imdb.com/name/*
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 // @require        https://raw.githubusercontent.com/datejs/Datejs/master/build/date.js
 // @require        https://raw.githubusercontent.com/evanplaice/jquery-csv/master/src/jquery.csv.min.js
@@ -55,7 +55,7 @@ cfg = new MonkeyConfig({
 		omdb_username: {
 			type: 'text',
 			'default': 'foo'
-		}
+		}		
     }
 });
 
@@ -76,9 +76,21 @@ function loadUserRatingsAndStoreToGmStorage() {
 		return;
 	}
 	
-	var userId = scrapUserId();
+	var userId = "";
+  
+  // Get user ID
+  var imdbUserEditPageUrl = 'https://www.imdb.com/activity/editprofile';
+	$.ajax({
+		dataType: "html",
+		url: imdbUserEditPageUrl,
+		success: function(html_data) {
+      var scrapedUserId = $(html_data).find('.auth-imput-row div').text();
+			console.log('Parsed UserId: ' + scrapedUserId);
+      userId = scrapedUserId;
+		}
+	});
 
-	var imdbUserRatingsCsvUrl = 'http://www.imdb.com/user/' + userId + '/ratings/export';
+	var imdbUserRatingsCsvUrl = 'https://www.imdb.com/list/export?list_id=ratings&author_id=' + userId;
 	$.ajax({
 		dataType: "text",
 		url: imdbUserRatingsCsvUrl,
@@ -126,7 +138,7 @@ function addRatingsToSection(filmoCategorySection) {
 		$(filmoCategorySection).find('.filmo-row:not(.header)').each(function() {
 			var imdbId = $(this).attr('id').split('-')[1];
 			var omdbUser = cfg.get('omdb_username');
-			var omdbUrl = 'http://www.omdbapi.com/?i=' + imdbId + '&apikey=' + omdbUser;
+			var omdbUrl = 'https://www.omdbapi.com/?i=' + imdbId + '&apikey=' + omdbUser;
 			var yearSpan = $(this).find('span.year_column');
 			var myRating = getUserRating(imdbId);
 			var itemText = $(this).text();
@@ -137,7 +149,7 @@ function addRatingsToSection(filmoCategorySection) {
 				if (data.Response === 'True') {
 					addData(yearSpan, data.imdbRating, myRating, data.imdbVotes, data.Released);
 				} else {
-					addData(yearSpan, 'N/A', myRating, 'N/A', yearSpan.text().trim().slice(0,4));
+					addData(yearSpan, 'n/a', myRating, 'n/a', yearSpan.text().trim().slice(0,4));
 				}
 			}).fail(function( jqxhr, textStatus, error ) {
 				var err = textStatus + ", " + error;
@@ -164,17 +176,17 @@ function calcSort(a, b, sortProperty, direction) {
 			break;
 		case 'Year':
 			var aval = $(a).find('.year_column').attr('title');
-			if (aval === 'N/A') {aval = $(a).find('.year_column').text().trim().slice(0,4);}
+			if (aval === 'n/a') {aval = $(a).find('.year_column').text().trim().slice(0,4);}
 			var bval = $(b).find('.year_column').attr('title');
-			if (bval === 'N/A') {bval = $(b).find('.year_column').text().trim().slice(0,4);}
+			if (bval === 'n/a') {bval = $(b).find('.year_column').text().trim().slice(0,4);}
 			return Date.parse(aval) < Date.parse(bval) ? (1 * direction) : (-1 * direction);
 			//selector = '.year_column';
 			//break;
 		default:
 			break;
 	}
-	opA = Number($(a).find(selector).text().replace(',','').replace('N/A', '0'));
-	opB = Number($(b).find(selector).text().replace(',','').replace('N/A', '0'));
+	opA = Number($(a).find(selector).text().replace(',','').replace('n/a', '0'));
+	opB = Number($(b).find(selector).text().replace(',','').replace('n/a', '0'));
 	return opA < opB ? (1 * direction) : (opA > opB ? -1 * direction : 0); 
 }
 
