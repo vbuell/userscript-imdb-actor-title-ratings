@@ -78,8 +78,8 @@ function loadUserRatingsAndStoreToGmStorage() {
 	
 	var userId = "";
   
-  // Get user ID
-  var imdbUserEditPageUrl = 'https://www.imdb.com/activity/editprofile';
+    // Get user ID
+    var imdbUserEditPageUrl = 'https://www.imdb.com/activity/editprofile';
 	$.ajax({
 		dataType: "html",
 		url: imdbUserEditPageUrl,
